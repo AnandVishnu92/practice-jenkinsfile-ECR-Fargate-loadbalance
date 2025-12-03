@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/Sandhyagito/Jenkins-CI-CD-Pipeline-for-a-Web-Application.git'
+                git branch: 'main', url: 'https://github.com/AnandVishnu92/practice-jenkinsfile-ECR-Fargate-loadbalance.git'
             }
         }
         stage('Build') {
