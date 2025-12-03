@@ -16,14 +16,7 @@ pipeline {
                 echo 'Testing...'
             }
         }
-        stage('Deploy') {
-            steps {
-                script {
-                    // Deploys the HTML page using a Docker container with NGINX
-                    sh '''
-                        docker run --name Sandhya-Webserver -d -p 8081:80 -v "$(pwd):/usr/share/nginx/html" nginx
-                    '''
-                }
+        
             }
         }
     }
