@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_HOST_USER = "ubuntu"
-        DOCKER_HOST_IP = "44.197.250.44"
+        DOCKER_HOST_IP = "3.84.209.105"
         IMAGE_NAME = "Ngnix-jenkins"
         IMAGE_TAG = "test1"
             }
