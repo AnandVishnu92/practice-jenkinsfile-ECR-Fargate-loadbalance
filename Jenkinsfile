@@ -3,46 +3,52 @@ pipeline {
 
     environment {
         DOCKER_HOST_USER = "ubuntu"
-        DOCKER_HOST_IP = "3.84.209.105"
-        IMAGE_NAME = "Ngnix-jenkins"
-        IMAGE_TAG = "test1"
-            }
+        DOCKER_HOST_IP   = "3.84.209.105"
+        IMAGE_NAME       = "Ngnix-jenkins"
+        IMAGE_TAG        = "test1"
+    }
     
     stages {
+        
         stage('Clone Repository') {
             steps {
                 git branch: 'main', url: 'https://github.com/AnandVishnu92/practice-jenkinsfile-ECR-Fargate-loadbalance.git'
             }
         }
-      stage('Copy Files to Docker Server') {
+
+        stage('Copy Files to Docker Server') {
             steps {
                 sshagent(['docker-ssh-key']) {
                     sh """
-                    scp -o StrictHostKeyChecking=no -r ./* ${DOCKER_HOST_USER}@${DOCKER_HOST_IP}:/home/${DOCKER_HOST_USER}/app/
+                        scp -o StrictHostKeyChecking=no -r ./* ${DOCKER_HOST_USER}@${DOCKER_HOST_IP}:/home/${DOCKER_HOST_USER}/app/
                     """
                 }
             }
         }
+
         stage('Build Docker Image on Remote Host') {
-    sshagent(['docker-key']) {
-        sh """
-        ssh -o StrictHostKeyChecking=no ubuntu@3.84.209.105 '
-            cd /home/ubuntu/app &&
-            docker build -t demoapp:latest .
-        '
-        """
-    }
-}
+            steps {
+                sshagent(['docker-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${DOCKER_HOST_USER}@${DOCKER_HOST_IP} '
+                            cd /home/${DOCKER_HOST_USER}/app &&
+                            docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                        '
+                    """
+                }
+            }
+        }
+
         stage('Optional: Run Test Container') {
             steps {
                 sshagent(['docker-ssh-key']) {
                     sh """
-                    ssh ${DOCKER_HOST_USER}@${DOCKER_HOST_IP} "
-                    docker rm -f test-container || true
-                    docker run -d --name test-container -p 8080:80 ${IMAGE_NAME}:${IMAGE_TAG}
-                    sleep 5
-                    docker rm -f test-container
-                    "
+                        ssh ${DOCKER_HOST_USER}@${DOCKER_HOST_IP} "
+                            docker rm -f test-container || true
+                            docker run -d --name test-container -p 8080:80 ${IMAGE_NAME}:${IMAGE_TAG}
+                            sleep 5
+                            docker rm -f test-container
+                        "
                     """
                 }
             }
