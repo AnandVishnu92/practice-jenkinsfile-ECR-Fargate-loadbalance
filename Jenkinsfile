@@ -18,7 +18,7 @@ pipeline {
 
         stage('Copy Files to Docker Server') {
             steps {
-                sshagent(['docker-ssh-key']) {
+                sshagent(['docker-key']) {
                     sh """
                         scp -o StrictHostKeyChecking=no -r ./* ${DOCKER_HOST_USER}@${DOCKER_HOST_IP}:/home/${DOCKER_HOST_USER}/app/
                     """
@@ -28,7 +28,7 @@ pipeline {
 
         stage('Build Docker Image on Remote Host') {
             steps {
-                sshagent(['docker-ssh-key']) {
+                sshagent(['docker-key']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${DOCKER_HOST_USER}@${DOCKER_HOST_IP} '
                             cd /home/${DOCKER_HOST_USER}/app &&
@@ -41,7 +41,7 @@ pipeline {
 
         stage('Optional: Run Test Container') {
             steps {
-                sshagent(['docker-ssh-key']) {
+                sshagent(['docker-key']) {
                     sh """
                         ssh ${DOCKER_HOST_USER}@${DOCKER_HOST_IP} "
                             docker rm -f test-container || true
