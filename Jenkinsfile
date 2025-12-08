@@ -24,18 +24,15 @@ pipeline {
             }
         }
         stage('Build Docker Image on Remote Host') {
-            steps {
-                sshagent(['docker-ssh-key']) {
-                    sh """
-                    ssh -o StrictHostKeyChecking=no ${DOCKER_HOST_USER}@${DOCKER_HOST_IP} "
-                    cd /home/${DOCKER_HOST_USER}/app &&
-                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} . &&
-                    docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
-                    "
-                    """
-                }
-            }
-        }
+    sshagent(['docker-key']) {
+        sh """
+        ssh -o StrictHostKeyChecking=no ubuntu@3.84.209.105 '
+            cd /home/ubuntu/app &&
+            docker build -t demoapp:latest .
+        '
+        """
+    }
+}
         stage('Optional: Run Test Container') {
             steps {
                 sshagent(['docker-ssh-key']) {
